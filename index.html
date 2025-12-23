@@ -6,6 +6,7 @@
     <title>Where in the World is Danny Horns?</title>
     <link href="https://api.mapbox.com/mapbox-gl-js/v3.0.1/mapbox-gl.css" rel="stylesheet">
     <script src="https://api.mapbox.com/mapbox-gl-js/v3.0.1/mapbox-gl.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;700;800&display=swap" rel="stylesheet">
     <style>
         * {
             margin: 0;
@@ -14,7 +15,8 @@
         }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            font-family: 'Poppins', 'Segoe UI', 'Trebuchet MS', 'Arial Rounded MT Bold', sans-serif;
+            font-weight: 700;
             background: linear-gradient(135deg, #f5e6d3 0%, #d4a574 100%);
             min-height: 100vh;
             padding: 20px;
@@ -32,10 +34,33 @@
         .header {
             background: transparent;
             color: #4a3425;
-            padding: 30px 20px;
+            padding: 30px 20px 0;
             text-align: center;
             max-width: 600px;
             margin: 0 auto;
+        }
+
+        .header-logo {
+            max-width: 100%;
+            height: auto;
+            display: block;
+            margin: 0 auto;
+        }
+
+        .how-to-play {
+            text-align: center;
+            margin: 0 auto 20px;
+            cursor: pointer;
+            color: #4a3425;
+            font-size: 18px;
+            font-weight: 800;
+            text-decoration: underline;
+            transition: all 0.3s ease;
+        }
+
+        .how-to-play:hover {
+            color: #a67c52;
+            transform: scale(1.05);
         }
 
         h1 {
@@ -87,7 +112,7 @@
 
         #map {
             width: 100%;
-            height: 400px;
+            height: 440px;
             cursor: crosshair;
             border-radius: 20px 20px 0 0;
         }
@@ -107,11 +132,12 @@
         .result-content {
             font-size: 18px;
             color: #333;
+            font-weight: 700;
         }
 
         .distance {
             font-size: 32px;
-            font-weight: 700;
+            font-weight: 800;
             color: #a67c52;
             margin: 10px 0;
         }
@@ -119,6 +145,15 @@
         .instruction {
             color: #666;
             font-size: 16px;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+
+        .sub-instruction {
+            color: #888;
+            font-size: 12px;
+            font-weight: 600;
+            margin-top: 5px;
         }
 
         .popup-overlay {
@@ -147,44 +182,68 @@
             text-align: center;
             box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
             animation: popIn 0.4s ease;
-            max-width: 90%;
-            max-width: 500px;
+            max-width: 90vw;
+            max-height: 90vh;
+            overflow-y: auto;
         }
 
         .popup h2 {
             font-size: 48px;
+            font-weight: 800;
             margin-bottom: 10px;
         }
 
         .popup p {
             font-size: 20px;
+            font-weight: 700;
             margin-bottom: 20px;
         }
 
         .popup .location-title {
             font-size: 24px;
-            font-weight: 600;
+            font-weight: 800;
             margin: 15px 0 20px 0;
             color: white;
             display: block;
             text-align: center;
         }
 
+        .popup-image-container {
+            position: relative;
+            width: 100%;
+            margin-top: 20px;
+            min-height: 200px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
         .popup img {
             width: 100%;
             height: auto;
             border-radius: 10px;
-            margin-top: 20px;
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            display: block;
+            transition: opacity 0.3s ease;
+        }
+
+        .popup-loading-spinner {
+            position: absolute;
+            width: 50px;
+            height: 50px;
+            border: 5px solid rgba(255, 255, 255, 0.3);
+            border-top: 5px solid white;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
         }
 
         .previous-button {
-            background: white;
-            color: #4a3425;
+            background: #4a3425;
+            color: white;
             border: none;
             padding: 15px 30px;
             font-size: 18px;
-            font-weight: 600;
+            font-weight: 800;
             border-radius: 10px;
             cursor: pointer;
             margin: 20px auto 40px;
@@ -196,7 +255,7 @@
         .previous-button:hover {
             transform: translateY(-2px);
             box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
-            background: #f8f9fa;
+            background: #5c4530;
         }
 
         .previous-button:active {
@@ -206,15 +265,29 @@
         .previous-popup .popup {
             background: white;
             color: #333;
-            max-height: 80vh;
+            max-height: 90vh;
             overflow-y: auto;
-            max-width: 400px;
+            max-width: 90vw;
+            min-width: 90vw;
+            position: relative;
         }
 
         .previous-popup .popup h2 {
             color: #4a3425;
-            font-size: 32px;
+            font-size: 20px;
+            font-weight: 800;
             margin-bottom: 20px;
+        }
+
+        .previous-popup .close-x,
+        .instructions-popup .close-x {
+            background: #a67c52;
+            color: white;
+        }
+
+        .previous-popup .close-x:hover,
+        .instructions-popup .close-x:hover {
+            background: #4a3425;
         }
 
         .date-list {
@@ -242,12 +315,13 @@
         }
 
         .date-item .date-text {
-            font-weight: 600;
+            font-weight: 800;
             font-size: 16px;
         }
 
         .date-item .location-text {
             font-size: 14px;
+            font-weight: 700;
             opacity: 0.9;
         }
 
@@ -260,12 +334,101 @@
             cursor: pointer;
             margin-top: 20px;
             font-size: 16px;
-            font-weight: 600;
+            font-weight: 800;
             transition: all 0.3s ease;
         }
 
         .close-button:hover {
             background: #d0d0d0;
+        }
+
+        .instructions-popup .popup {
+            background: white;
+            color: #4a3425;
+            width: 90vw;
+            height: 90vh;
+            max-width: none;
+            max-height: none;
+            padding: 30px;
+            overflow-y: auto;
+            position: relative;
+        }
+
+        .instructions-popup .popup h2 {
+            color: #4a3425;
+            font-size: 36px;
+            margin-bottom: 30px;
+            font-weight: 800;
+        }
+
+        .instructions-popup .popup p {
+            font-size: 20px;
+            line-height: 1.8;
+            margin-bottom: 20px;
+            font-weight: 600;
+        }
+
+        .close-x {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: #a67c52;
+            color: white;
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            font-size: 24px;
+            font-weight: 800;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            line-height: 1;
+            z-index: 10;
+        }
+
+        .close-x:hover {
+            background: #4a3425;
+            transform: rotate(90deg);
+        }
+
+        #popup .popup .close-x {
+            background: white;
+            color: #11998e;
+        }
+
+        #popup .popup .close-x:hover {
+            background: #f0f0f0;
+            color: #38ef7d;
+        }
+
+        #confetti-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1001;
+            overflow: hidden;
+        }
+
+        .confetti {
+            position: absolute;
+            width: 10px;
+            height: 20px;
+            background: #38ef7d;
+            opacity: 0.8;
+            pointer-events: none;
+        }
+
+        @keyframes confettiFall {
+            to {
+                transform: translateY(100vh) rotate(360deg);
+                opacity: 0;
+            }
         }
 
         @keyframes fadeIn {
@@ -294,19 +457,35 @@
             }
 
             .header {
-                padding: 20px 15px;
+                padding: 20px 15px 0;
+            }
+
+            .header-logo {
+                max-width: 90%;
             }
 
             #map {
-                height: 350px;
+                height: 385px;
             }
 
             .result-content {
                 font-size: 16px;
             }
 
+            .instruction {
+                font-size: 14px;
+            }
+
+            .sub-instruction {
+                font-size: 11px;
+            }
+
             .distance {
                 font-size: 28px;
+            }
+
+            .popup {
+                padding: 25px;
             }
 
             .popup h2 {
@@ -317,23 +496,56 @@
                 font-size: 18px;
             }
 
+            .popup-image-container {
+                min-height: 150px;
+            }
+
+            .popup-loading-spinner {
+                width: 40px;
+                height: 40px;
+                border-width: 4px;
+            }
+
             .popup .location-title {
                 font-size: 20px;
                 display: block;
+            }
+
+            .instructions-popup .popup {
+                padding: 20px;
+            }
+
+            .instructions-popup .popup h2 {
+                font-size: 28px;
+                margin-bottom: 20px;
+            }
+
+            .instructions-popup .popup p {
+                font-size: 16px;
+            }
+
+            .close-x {
+                width: 35px;
+                height: 35px;
+                font-size: 20px;
+                top: 15px;
+                right: 15px;
             }
         }
 
         @media (min-width: 768px) {
             #map {
-                height: 500px;
+                height: 550px;
             }
         }
     </style>
 </head>
 <body>
     <div class="header">
-        <h1>Where in the World is Danny Horns?</h1>
+        <img src="https://lucashorns.github.io/geogame/WWDH.png" alt="Where in the World is Danny Horns?" class="header-logo">
     </div>
+    
+    <div class="how-to-play" id="howToPlayBtn">How to Play</div>
     
     <div class="image-container">
         <img src=""  id="previewImage">
@@ -345,7 +557,8 @@
         
         <div class="result-box">
             <div class="result-content">
-                <p class="instruction"></p>
+                <p class="instruction">Drop a pin where you think the photo was taken!</p>
+                <p class="sub-instruction">Use two fingers to zoom and pan.</p>
             </div>
         </div>
     </div>
@@ -354,17 +567,35 @@
 
     <div class="popup-overlay" id="popup">
         <div class="popup">
+            <button class="close-x" id="closeSuccess">×</button>
             <h2>🎉 Correct!</h2>
             <p class="location-title">You found the location!</p>
-            <img src="" alt="Location revealed" loading="lazy">
+            <div class="popup-image-container">
+                <div class="popup-loading-spinner" id="popupSpinner"></div>
+                <img src="" alt="Location revealed" id="popupImage">
+            </div>
         </div>
     </div>
+    
+    <div id="confetti-container"></div>
 
     <div class="popup-overlay previous-popup" id="previousPopup">
         <div class="popup">
-            <h2>📅 Previous Puzzles</h2>
+            <button class="close-x" id="closePrevious">×</button>
+            <h2>Previous Puzzles</h2>
             <ul class="date-list" id="dateList"></ul>
-            <button class="close-button" id="closeButton">Close</button>
+        </div>
+    </div>
+
+    <div class="popup-overlay instructions-popup" id="instructionsPopup">
+        <div class="popup">
+            <button class="close-x" id="closeInstructions">×</button>
+            <h2>How to Play</h2>
+            <p>Where in the world is Danny Horns???</p>
+            <p>Each day you'll find a new clue – a fragment of a real photo of Danny taken from somewhere in the world.</p>
+            <p>Explore the map and drop a pin where you think the photo was taken.</p>
+            <p>Get within 5 miles to reveal the correct location and the full photo!</p>
+            <p>Come back each day for a new photo and new location.</p>
         </div>
     </div>
 
@@ -387,7 +618,24 @@
             style: 'mapbox://styles/mapbox/standard-satellite',
             center: [-98.063, 17.661], // [longitude, latitude]
             zoom: 1,
-            scrollZoom: false
+            scrollZoom: false,
+            dragPan: false,
+            attributionControl: false
+        });
+
+        // Re-enable touch drag for two-finger gestures
+        map.on('load', () => {
+            const canvas = map.getCanvasContainer();
+            canvas.addEventListener('touchstart', (e) => {
+                if (e.touches.length >= 2) {
+                    map.dragPan.enable();
+                }
+            });
+            canvas.addEventListener('touchend', (e) => {
+                if (e.touches.length < 2) {
+                    map.dragPan.disable();
+                }
+            });
         });
 
         let userMarker = null;
@@ -476,9 +724,21 @@
                 const titleElement = document.querySelector('#popup .popup .location-title');
                 console.log('Title element found:', titleElement);
                 
-                document.querySelector('#popup .popup h2').textContent = '🎉 Correct!';
+                document.querySelector('#popup .popup h2').textContent = 'Found him!';
                 titleElement.textContent = gameData.title;
-                document.querySelector('#popup .popup img').src = gameData.actualImage;
+                
+                // Handle popup image loading with spinner
+                const popupImg = document.getElementById('popupImage');
+                const popupSpinner = document.getElementById('popupSpinner');
+                
+                popupSpinner.style.display = 'block';
+                popupImg.style.opacity = '0';
+                
+                popupImg.onload = function() {
+                    popupSpinner.style.display = 'none';
+                    popupImg.style.opacity = '1';
+                };
+                popupImg.src = gameData.actualImage;
                 
                 console.log('Title element now contains:', titleElement.textContent);
                 
@@ -490,7 +750,8 @@
                 
                 // Reset result box
                 document.querySelector('.result-content').innerHTML = `
-                    <p class="instruction"></p>
+                    <p class="instruction">Drop a pin where you think the photo was taken!</p>
+                    <p class="sub-instruction">Use two fingers to zoom and pan.</p>
                 `;
             } else {
                 console.error('No data found for date:', dateString);
@@ -531,7 +792,6 @@
                 li.innerHTML = `
                     <div>
                         <div class="date-text">${puzzle.Date}</div>
-                        <div class="location-text">${puzzle.Title}</div>
                     </div>
                     <div>➜</div>
                 `;
@@ -551,8 +811,8 @@
             document.getElementById('previousPopup').classList.add('show');
         });
 
-        // Close button handler
-        document.getElementById('closeButton').addEventListener('click', () => {
+        // Close previous puzzles button handler
+        document.getElementById('closePrevious').addEventListener('click', () => {
             document.getElementById('previousPopup').classList.remove('show');
         });
 
@@ -560,6 +820,23 @@
         document.getElementById('previousPopup').addEventListener('click', (e) => {
             if (e.target.id === 'previousPopup') {
                 document.getElementById('previousPopup').classList.remove('show');
+            }
+        });
+
+        // How to Play button handler
+        document.getElementById('howToPlayBtn').addEventListener('click', () => {
+            document.getElementById('instructionsPopup').classList.add('show');
+        });
+
+        // Close instructions button handler
+        document.getElementById('closeInstructions').addEventListener('click', () => {
+            document.getElementById('instructionsPopup').classList.remove('show');
+        });
+
+        // Close instructions popup when clicking outside
+        document.getElementById('instructionsPopup').addEventListener('click', (e) => {
+            if (e.target.id === 'instructionsPopup') {
+                document.getElementById('instructionsPopup').classList.remove('show');
             }
         });
 
@@ -605,13 +882,46 @@
             if (distance <= 5) {
                 setTimeout(() => {
                     document.getElementById('popup').classList.add('show');
+                    createConfetti();
                 }, 300);
             }
         });
 
-        // Close popup when clicked
-        document.getElementById('popup').addEventListener('click', () => {
+        // Create confetti effect
+        function createConfetti() {
+            const container = document.getElementById('confetti-container');
+            const colors = ['#38ef7d', '#11998e', '#2ecc71', '#27ae60'];
+            
+            for (let i = 0; i < 50; i++) {
+                setTimeout(() => {
+                    const confetti = document.createElement('div');
+                    confetti.className = 'confetti';
+                    confetti.style.left = Math.random() * 100 + '%';
+                    confetti.style.background = colors[Math.floor(Math.random() * colors.length)];
+                    confetti.style.width = (Math.random() * 10 + 5) + 'px';
+                    confetti.style.height = (Math.random() * 15 + 10) + 'px';
+                    confetti.style.animation = `confettiFall ${Math.random() * 3 + 2}s linear forwards`;
+                    confetti.style.animationDelay = Math.random() * 0.5 + 's';
+                    
+                    container.appendChild(confetti);
+                    
+                    setTimeout(() => {
+                        confetti.remove();
+                    }, 5000);
+                }, i * 50);
+            }
+        }
+
+        // Close success popup
+        document.getElementById('closeSuccess').addEventListener('click', () => {
             document.getElementById('popup').classList.remove('show');
+        });
+
+        // Close popup when clicking overlay
+        document.getElementById('popup').addEventListener('click', (e) => {
+            if (e.target.id === 'popup') {
+                document.getElementById('popup').classList.remove('show');
+            }
         });
     </script>
 </body>
