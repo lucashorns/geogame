@@ -622,21 +622,6 @@
             attributionControl: false
         });
 
-        // Re-enable touch drag for two-finger gestures
-        map.on('load', () => {
-            const canvas = map.getCanvasContainer();
-            canvas.addEventListener('touchstart', (e) => {
-                if (e.touches.length >= 2) {
-                    map.dragPan.enable();
-                }
-            });
-            canvas.addEventListener('touchend', (e) => {
-                if (e.touches.length < 2) {
-                    map.dragPan.disable();
-                }
-            });
-        });
-
         let userMarker = null;
 
         // Parse CSV data (handles commas in quoted fields)
